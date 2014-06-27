@@ -1,0 +1,15 @@
+<!doctype html>
+<title>{% block title %}{% endblock %}</title>
+
+<style>
+body { font-family: sans; }
+
+</style>
+
+<h1>{{ self.title() }}</h1>
+
+<a href="/">Home</a>
+<br>
+<br>
+
+{% block body %}{% endblock %}

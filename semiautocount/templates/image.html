@@ -1,0 +1,21 @@
+#extends "base.html"
+#block title 
+
+Image {{name}}
+
+#endblock
+#block body 
+
+<div style="position: relative">
+{% for cell_id,x,y,label,call in label_points %}
+<div style="position: absolute; left: {{x}}px; top: {{y}}px">
+  <a href="/cell/{{image_id}}/{{cell_id}}">
+     <div style="position: absolute; left: -1.0em; top: -0.5em; color: #88ff88">{{label|e}}</div>
+     <div style="position: absolute; left: -0.0em; top: -0.5em; color: #ffff88">{{call|e}}</div>
+  </a>
+</div>
+{% endfor %}
+<a href="/find_cell/{{image_id}}"><img src="/image_image/{{image_id}}" ismap></a>
+</div>
+
+#endblock

@@ -1,0 +1,48 @@
+#extends "base.html"
+#block title 
+
+Cell
+
+#endblock
+#block body 
+
+<style>
+button { width: 100%; text-align: left; }
+</style>
+
+<a href="/image/{{image_id}}">Back to image</a>
+
+<p>
+<img src="/cell_image/{{image_id}}/{{cell_id}}">
+
+<p>
+Current label: {{current_label|e}}
+
+<p>
+Classifier call: {{call|e}}
+
+<div style="width: 30em">
+<form>
+
+<button name="label" value="">
+No label
+</button>
+<br>
+
+{% for label in labels: %}
+<button name="label" value="{{label|e}}">
+<span style="font-family: monospace">{{label|e}}</span> - {{labels[label]|e}}
+</button>
+<br>
+{% endfor %}
+
+<br>
+
+{% for column in measure.columns: %}
+{{column|e}} = {{'%.2f'|format(measure.data[cell_id][loop.index0])}} <br/>
+{% endfor %}
+
+</form>
+</div>
+
+#endblock

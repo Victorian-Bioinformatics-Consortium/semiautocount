@@ -1,0 +1,15 @@
+#extends "base.html"
+#block title 
+
+Home
+
+#endblock
+#block body 
+
+<h2>Images</h2>
+
+{% for name in index %}
+<a href="image/{{ loop.index0 }}">{{name}}</a><br>
+{% endfor %}
+
+#endblock
