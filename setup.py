@@ -34,10 +34,11 @@ setup(
             ],
         },
     
-    install_requires = [ 
+    install_requires = [         
         'numpy',
         'scipy',
         'scikit-image',
+        'scikit-learn',
         'Pillow',
         'werkzeug',
         'Jinja2',
