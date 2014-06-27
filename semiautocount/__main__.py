@@ -1,5 +1,4 @@
 
-import autocount
-
 if __name__ == '__main__':
-    autocount.main()
+    import semiautocount
+    semiautocount.main()
