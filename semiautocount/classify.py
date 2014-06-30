@@ -7,8 +7,9 @@ from . import util, autocount_workspace
 
 class Classification(object): pass
 
-
-@config.Section('training', 'Directories containing labelled training data.')
+@config.help(
+    'Classify unlabelled cells based on labelled cells.',
+    )
 class Classify(config.Action_with_working_dir):
     _workspace_class = autocount_workspace.Autocount_workspace
 
@@ -16,11 +17,17 @@ class Classify(config.Action_with_working_dir):
 
     def run(self):
         work = self.get_workspace()
+        config = work.get_config()
+        
+        training_dirs = [ self.working_dir ] + [
+            work.relative_path_as_path(item)
+            for item in config.training
+            ]
         
         data = [ ]
         labels = [ ]
         
-        for dirname in [ self.working_dir ] + self.training:
+        for dirname in training_dirs:
             trainer = autocount_workspace.Autocount_workspace(dirname, must_exist=True)
             for i in xrange(len(trainer.index)):
                 image_labels = trainer.get_labels(i)

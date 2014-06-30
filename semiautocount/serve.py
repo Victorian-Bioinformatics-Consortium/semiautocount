@@ -38,13 +38,10 @@ url_map = Map([
     ])
 
 class Server(object):
-    def __init__(self, dirname, training, labels):
+    def __init__(self, dirname):
         self.work = autocount_workspace.Autocount_workspace(dirname, must_exist=True)
-        self.training = [
-            autocount_workspace.Autocount_workspace(item, must_exist=True)
-            for item in training
-            ]
-        self.labels = labels
+        conf = work.get_config()
+        self.labels = conf.labels
         
         loader = jinja2.FileSystemLoader(
             os.path.join(os.path.split(__file__)[0],'templates')
@@ -162,21 +159,15 @@ class Server(object):
             return redirect('/image/%d' % image_id)
         return redirect('/cell/%d/%d' % (image_id,cell_id))
 
+
 @config.help(
     'Interactively label cells.'
     )
-@config.Section('training')
 class Label(config.Action_with_working_dir):
     _workspace_class = autocount_workspace.Autocount_workspace
 
-    training = [ ]
-
     def run(self):
-        work = self.get_workspace()
-        conf = work.get_config()
-        labels = conf.labels
-    
-        Server(self.working_dir, self.training, labels).serve()
+        Server(self.working_dir).serve()
 
 
 

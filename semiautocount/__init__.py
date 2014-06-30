@@ -17,6 +17,7 @@ def main():
             Import,
             Label,
             Classify,
+            'https://github.com/Victorian-Bioinformatics-Consortium/semiautocount',
             ], 
         show_make_flags=False,
         )
