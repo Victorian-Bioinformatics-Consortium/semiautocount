@@ -212,8 +212,9 @@ def segment_image(prefix, filename, min_area):
 
 
 @config.help(
-    'Segment images into cells.',
-    'A directory is created that will then be used by "classify:".'
+    'Create a Semiautocount working directory based on a set of images. '
+    'Images are segmented into cells.',
+    'ANY EXISTING IMAGES IN DIRECTORY WILL BE FORGOTTEN'
     )
 @config.Float_flag('min_area',
     'Minimum cell area. '

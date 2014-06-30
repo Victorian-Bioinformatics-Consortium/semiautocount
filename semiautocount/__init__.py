@@ -11,9 +11,9 @@ from .classify import Classify
 
 def main():
     nesoni.run_toolbox([
-            'semiautocount version '+VERSION,
-            Configure,
+            'Semiautocount version '+VERSION,
             Segment,
+            Configure,
             Import,
             Label,
             Classify,
