@@ -9,7 +9,7 @@ from PIL import Image
 
 from nesoni import config
 
-from . import images, stats, util
+from . import images, stats, util, autocount_workspace
 
 class Segmentation(object): pass
 
@@ -224,6 +224,8 @@ def segment_image(prefix, filename, min_area):
     'Image filenames.'
     )
 class Segment(config.Action_with_output_dir):
+    _workspace_class = autocount_workspace.Autocount_workspace
+    
     min_area = 20.0
     images = [ ]
 
@@ -240,11 +242,11 @@ class Segment(config.Action_with_output_dir):
             
             index.append(name)
         
-        util.clear(work/'index.pgz')
+        util.clear(work/('config','index.pgz'))
         
         for name, filename in zip(index, self.images):
             print name
-            segment_image(work/name, filename, self.min_area)
+            segment_image(work/('images',name), filename, self.min_area)
 
-        util.save(work/'index.pgz', index)
+        util.save(work/('config','index.pgz'), index)
 

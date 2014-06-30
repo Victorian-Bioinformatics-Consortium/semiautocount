@@ -1,15 +1,17 @@
 #extends "base.html"
 #block title 
 
-Home
+{{dir_name|escape}}
 
 #endblock
 #block body 
 
+<a href="/classify">Run classifier</a>
+
 <h2>Images</h2>
 
 {% for name in index %}
-<a href="image/{{ loop.index0 }}">{{name}}</a><br>
+<a href="/image/{{ loop.index0 }}">{{name|escape}}</a><br>
 {% endfor %}
 
 #endblock

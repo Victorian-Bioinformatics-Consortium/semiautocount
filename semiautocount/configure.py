@@ -24,7 +24,8 @@ class Config(object):
 
 @config.help(
     'Configure a working directory created by "semiac segment:". '
-    'This needs to be done before using "semiac label:" or "semiac classify:"',
+    'This can be done before or after "semiac segment:". '
+    'However it needs to be done before using "semiac label:" or "semiac classify:"',
     'Run with just the directory name to see current configuration.'
     )
 @config.Section('labels',
@@ -36,7 +37,7 @@ class Config(object):
     'Optional. A space separated list of directories to get training cell labels from '
     '(in addition to any cells you label in this directory).'
     )
-class Configure(config.Action_with_working_dir):
+class Configure(config.Action_with_output_dir):
     _workspace_class = autocount_workspace.Autocount_workspace
 
     labels = None

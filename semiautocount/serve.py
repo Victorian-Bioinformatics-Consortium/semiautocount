@@ -18,7 +18,7 @@ import jinja2
 from scipy import ndimage
 from nesoni import config
 
-from . import images, autocount_workspace
+from . import images, autocount_workspace, classify
 
 def image_response(image):
     return Response(
@@ -34,13 +34,14 @@ url_map = Map([
     Rule('/image_image/<int:image_id>', endpoint='on_image_image'),
     Rule('/image/<int:image_id>', endpoint='on_image'),
     Rule('/find_cell/<int:image_id>', endpoint='on_find_cell'),
+    Rule('/classify', endpoint='on_classify'),
     Rule('/', endpoint='on_home'),
     ])
 
 class Server(object):
     def __init__(self, dirname):
         self.work = autocount_workspace.Autocount_workspace(dirname, must_exist=True)
-        conf = work.get_config()
+        conf = self.work.get_config()
         self.labels = conf.labels
         
         loader = jinja2.FileSystemLoader(
@@ -52,6 +53,7 @@ class Server(object):
             line_comment_prefix='##',
             )
         self.env.globals['labels'] = self.labels
+        self.env.globals['dir_name'] = self.work.name
     
     @Request.application
     def application(self, request):
@@ -158,6 +160,10 @@ class Server(object):
         if cell_id == -1:
             return redirect('/image/%d' % image_id)
         return redirect('/cell/%d/%d' % (image_id,cell_id))
+    
+    def on_classify(self, request):
+        classify.Classify(self.work.working_dir).run()
+        return redirect('/')
 
 
 @config.help(

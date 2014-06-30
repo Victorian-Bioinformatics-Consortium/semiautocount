@@ -1,4 +1,4 @@
-# semiautocount
+# Semiautocount
 
 Count types of cell in a blood smear based on interactive training,
 for example to measure the stage and severity of malarial infection.
@@ -70,7 +70,7 @@ Repeat steps 3 and 4 until the classification is satisfactory.
 
 ## TODO
 
-"semiac import:" should also allow import from old semiac directories.
+"semiac import:" should also allow import from old Semiautocount directories.
 
 
 
