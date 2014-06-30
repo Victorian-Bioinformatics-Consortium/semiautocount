@@ -47,21 +47,21 @@ This gives you:
 
 ### Basic workflow
 
-1. Create a Semiautocount working directory based on a set of images.
+\1. Create a Semiautocount working directory based on a set of images.
 The images are segmented into cells. eg
 
     semiac segment: mydir somewhere/*.png
 
-2. Configure the working directory with "semiac configure:", eg
+\2. Configure the working directory with "semiac configure:", eg
 
     semiac configure: mydir labels: x=mis-segmentation d=debris w=white-blood-cell 0=uninfected 1=singlet 2=doublet
 
-3. Interactively label some of the cells with "semiac label:". This starts a 
+\3. Interactively label some of the cells with "semiac label:". This starts a 
 local webserver which you can then interact with in your browser.
 
     semiac label: mydir
 
-4. Use machine learning to classify remaining cells with "semiac classify:".
+\4. Use machine learning to classify remaining cells with "semiac classify:".
 
     semiac classify: mydir
 
