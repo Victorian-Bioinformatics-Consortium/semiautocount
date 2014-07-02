@@ -26,21 +26,30 @@ pip installation will attempt to install these, however note that
 as at June 2014, installing scikit-image and scikit-learn require 
 numpy and six to already be installed or things break.
 
+### Windows requirements
+
+I recommend using the Anaconda Python installer.
+
+http://continuum.io/downloads
+
+Install the Python 2.7 version, 32 or 64 bit as appropriate. Once 
+Anaconda is installed, Semiautocount can be installed and upgraded 
+using pip as shown below.
+
 
 ## Installation
 
-Install from source:
-
-    python setup.py install
-
-Install from github:
-
-    pip install --upgrade https://github.com/Victorian-Bioinformatics-Consortium/semiautocount/archive/master.zip
+    pip install https://github.com/Victorian-Bioinformatics-Consortium/semiautocount/archive/master.zip
   
 This gives you:
 
 - semiac command line program  
 - semiautocount module in python
+
+### Upgrading
+
+    pip uninstall -y semiautocount nesoni
+    pip install https://github.com/Victorian-Bioinformatics-Consortium/semiautocount/archive/master.zip
 
 
 ## Usage
