@@ -222,7 +222,7 @@ def segment_image(prefix, filename, min_area):
     'Unit is relative to scaling constant derived from the image.'
     )
 @config.Main_section('images',
-    'Image filenames.'
+    'Image filenames, or a directory containing images.'
     )
 class Segment(config.Action_with_output_dir):
     _workspace_class = autocount_workspace.Autocount_workspace
@@ -233,9 +233,11 @@ class Segment(config.Action_with_output_dir):
     def run(self):
         work = self.get_workspace()
         
+        filenames = util.wildcard(self.images,['.png','.tif','.tiff','.jpg'])
+        
         index = [ ]
         seen = set()
-        for filename in self.images:
+        for filename in filenames:
             name = os.path.splitext(os.path.basename(filename))[0]
             
             assert name not in seen, 'Duplicate image name: '+name
@@ -246,7 +248,7 @@ class Segment(config.Action_with_output_dir):
         util.clear(work/('config','index.pgz'))
 
         with nesoni.Stage() as stage:        
-            for name, filename in zip(index, self.images):
+            for name, filename in zip(index, filenames):
                 stage.process(segment_image, work/('images',name), filename, self.min_area)
 
         util.save(work/('config','index.pgz'), index)

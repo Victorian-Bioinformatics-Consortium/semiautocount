@@ -3,13 +3,13 @@ import os
 
 from nesoni import config
 
-from . import images, autocount_workspace
+from . import images, autocount_workspace, util
 
 @config.help(
     'Import labels from Cell Counting Aid.'
     )
 @config.Main_section('filenames',
-    '.txt files produced by Cell Counting Aid.'
+    '.txt files produced by Cell Counting Aid, or a directory containing these files.'
     )
 class Import(config.Action_with_working_dir):
     _workspace_class = autocount_workspace.Autocount_workspace
@@ -19,7 +19,9 @@ class Import(config.Action_with_working_dir):
     def run(self):
         work = self.get_workspace()
         
-        for filename in self.filenames:
+        filenames = util.wildcard(self.filenames, ['.txt'])
+        
+        for filename in filenames:
             name = os.path.splitext(os.path.basename(filename))[0]
             
             try:

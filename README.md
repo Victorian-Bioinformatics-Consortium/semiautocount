@@ -59,7 +59,7 @@ This gives you:
 1\. Create a Semiautocount working directory based on a set of images.
 The images are segmented into cells. eg
 
-    semiac segment: mydir somewhere/*.png
+    semiac segment: mydir inputimagesdir
 
 2\. Configure the working directory with "semiac configure:", eg
 
