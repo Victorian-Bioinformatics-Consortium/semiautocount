@@ -10,6 +10,14 @@ Cell
 button { width: 100%; text-align: left; }
 </style>
 
+<script>
+function keydown(e) {
+    window.location.href = '/cell/{{image_id}}/{{cell_id}}?key='+e.keyCode
+}
+
+document.addEventListener('keypress', keydown, false);
+</script>
+
 <a href="/image/{{image_id}}">Back to image</a>
 
 <p>
@@ -31,7 +39,7 @@ No label
 
 {% for label in labels: %}
 <button name="label" value="{{label|e}}">
-<span style="font-family: monospace">{{label|e}}</span> - {{labels[label]|e}}
+<span style="font-family: monospace">{{label|e}}</span> = {{labels[label]|e}}
 </button>
 <br>
 {% endfor %}

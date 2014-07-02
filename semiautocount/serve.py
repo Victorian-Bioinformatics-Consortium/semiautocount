@@ -6,7 +6,7 @@ allow interactive classification.
 
 """
 
-import socket, os, collections
+import socket, os, collections, traceback
 
 from werkzeug.wrappers import Request, Response
 from werkzeug.routing import Map, Rule
@@ -43,6 +43,8 @@ class Server(object):
         self.work = autocount_workspace.Autocount_workspace(dirname, must_exist=True)
         conf = self.work.get_config()
         self.labels = conf.labels
+        
+        self.message = ''
         
         loader = jinja2.FileSystemLoader(
             os.path.join(os.path.split(__file__)[0],'templates')
@@ -98,15 +100,21 @@ class Server(object):
         return image_response(result)
     
     def on_cell(self, request, image_id, cell_id):
-        if 'label' in request.args:            
+        new_label = request.args.get('label',None)
+        if 'key' in request.args:
+            new_label = chr(int(request.args['key']))
+        if new_label and new_label not in self.labels:
+            new_label = None
+        
+        if new_label is not None:
             labels = self.work.get_labels(image_id)
-            if request.args['label'] == '':
+            if new_label == '':
                 labels[cell_id] = None
             else:
-                labels[cell_id] = request.args['label']
+                labels[cell_id] = new_label
             self.work.set_labels(image_id, labels)
-            #return redirect('cell/%d/%d' % (image_id, cell_id))
-            return redirect('image/%d' % image_id)
+            return redirect('/image/%d' % image_id)
+            #return redirect('/cell/%d/%d' % (image_id, cell_id))
         
         image_name = self.work.index[image_id]
         current_label = self.work.get_labels(image_id)[cell_id]
@@ -149,6 +157,8 @@ class Server(object):
     
     def on_home(self, request):
         index = self.work.index
+        message = self.message
+        self.message = ''
         return self._response('home.html', locals())
 
     def on_find_cell(self, request, image_id):
@@ -162,7 +172,12 @@ class Server(object):
         return redirect('/cell/%d/%d' % (image_id,cell_id))
     
     def on_classify(self, request):
-        classify.Classify(self.work.working_dir).run()
+        try:
+            classify.Classify(self.work.working_dir).run()
+            self.message = 'Classified.'
+        except:
+            traceback.print_exc()
+            self.message = 'Classifier failed.'
         return redirect('/')
 
 

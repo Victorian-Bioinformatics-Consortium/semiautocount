@@ -6,7 +6,15 @@
 #endblock
 #block body 
 
-<a href="/classify">Run classifier</a>
+{% if message %}
+<div style="background: #ffb; margin: 1em; padding: 1em;">
+{{message}}
+</div>
+{% endif %}
+
+<form action="/classify">
+<button>Run classifier</button>
+</form>
 
 <h2>Images</h2>
 

@@ -35,7 +35,7 @@ Install from source:
 
 Install from github:
 
-    pip install -I git+https://github.com/Victorian-Bioinformatics-Consortium/semiautocount
+    pip install --upgrade https://github.com/Victorian-Bioinformatics-Consortium/semiautocount/archive/master.zip
   
 This gives you:
 

@@ -7,6 +7,7 @@ from scipy import ndimage
 from skimage import morphology, color, segmentation
 from PIL import Image
 
+import nesoni
 from nesoni import config
 
 from . import images, stats, util, autocount_workspace
@@ -19,7 +20,7 @@ def segment_image(prefix, filename, min_area):
     height = image.shape[0]
     width = image.shape[1]
     
-    print 'Segment'
+    print prefix, 'FG/BG'
     
     image_raveled = numpy.reshape(image,(height*width,3))
     
@@ -111,7 +112,7 @@ def segment_image(prefix, filename, min_area):
    
     fg = numpy.reshape(fg,(height,width))
         
-    print 'Detect size'
+    print prefix, 'Detect size'
     
     sizer = 1.0
     while True:
@@ -119,13 +120,13 @@ def segment_image(prefix, filename, min_area):
         n2 = numpy.sum(images.erode(fg, sizer*2.0))
         if n2 < n1*0.5: break
         sizer += 0.1
-    print sizer
+    print prefix, 'Size', sizer
     
-    print 'Cleave'
+    print prefix, 'Cleave'
     
     cores = images.cleave(fg, sizer * 2.5)
     
-    print 'Segment'
+    print prefix, 'Segment'
     
     core_labels, num_features = ndimage.label(cores)
     
@@ -148,7 +149,7 @@ def segment_image(prefix, filename, min_area):
         bad_labels.add(labels[y,width-1])
     
     threshold = sizer*sizer*min_area
-    print 'Min cell area:', threshold
+    print prefix, 'Min cell area', threshold
     areas = numpy.zeros(num_features+1,'int32')
     for i in numpy.ravel(labels):
         areas[i] += 1
@@ -171,7 +172,7 @@ def segment_image(prefix, filename, min_area):
         ]
     labels -= 1 #Labels start from zero, index into bounds
     
-    print 'Done'
+    print prefix, 'Done'
     
     #test = color.label2rgb(labels-1, image)
     
@@ -243,10 +244,10 @@ class Segment(config.Action_with_output_dir):
             index.append(name)
         
         util.clear(work/('config','index.pgz'))
-        
-        for name, filename in zip(index, self.images):
-            print name
-            segment_image(work/('images',name), filename, self.min_area)
+
+        with nesoni.Stage() as stage:        
+            for name, filename in zip(index, self.images):
+                stage.process(segment_image, work/('images',name), filename, self.min_area)
 
         util.save(work/('config','index.pgz'), index)
 
