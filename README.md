@@ -28,7 +28,7 @@ numpy and six to already be installed or things break.
 
 ### Windows requirements
 
-I recommend using the Anaconda Python installer.
+I recommend using the Anaconda Python installer:
 
 http://continuum.io/downloads
 
@@ -46,7 +46,7 @@ This gives you:
 - semiac command line program  
 - semiautocount module in python
 
-### Upgrading
+### Upgrading to the latest version
 
     pip uninstall -y semiautocount nesoni
     pip install https://github.com/Victorian-Bioinformatics-Consortium/semiautocount/archive/master.zip
@@ -75,6 +75,14 @@ local webserver which you can then interact with in your browser.
     semiac classify: mydir
 
 Repeat steps 3 and 4 until the classification is satisfactory.
+
+### Importing Cell Counting Aid labels
+
+Having performed steps 1 and 2 above, use:
+
+    semiac import: mydir inputimagesdir
+    
+This will import any .txt files in inputimagesdir as Cell Counting Aid cell labels.
 
 
 ## TODO
