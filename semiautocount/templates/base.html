@@ -15,8 +15,25 @@ SEMIAUTOCOUNT
 </div>
 <h1>{{ self.title() }}</h1>
 
-
+<table><tr>
+<td>
 <a href="/">Home</a>
+</td>
+
+<td>
+<form action="/next">
+<button>Label cells</button>
+</form>
+</td>
+
+<td>
+<form action="/classify">
+<button>Run classifier</button>
+</form>
+</td>
+
+</tr></table>
+
 </div>
 <div class="main">
 {% block body %}{% endblock %}

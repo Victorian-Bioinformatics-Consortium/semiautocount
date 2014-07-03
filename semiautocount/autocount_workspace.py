@@ -52,13 +52,14 @@ class Autocount_workspace(workspace.Workspace):
         return util.save(self/('images',self.index[i]+'-classification.pgz'), value)
 
     def get_calls(self, i, label_override):
+        labels = self.get_labels(i)
+
         if not self.has_classification(i):
             calls = [ None ] * len(labels)
         else:
             calls = self.get_classification(i).call[:]
         
         if label_override:
-            labels = self.get_labels(i)
             for j in xrange(len(calls)):
                 if labels[j] is not None:
                     calls[j] = labels[j]

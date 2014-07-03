@@ -6,7 +6,7 @@ allow interactive classification.
 
 """
 
-import socket, os, collections, traceback
+import socket, os, collections, traceback, random
 
 from werkzeug.wrappers import Request, Response
 from werkzeug.routing import Map, Rule
@@ -18,6 +18,8 @@ import jinja2
 from scipy import ndimage
 from nesoni import config
 
+import numpy as np
+
 from . import images, autocount_workspace, classify, util
 
 def image_response(image):
@@ -25,6 +27,46 @@ def image_response(image):
         images.png_str(image),
         mimetype='image/png',
         )
+
+
+def select_interesting(work, n):
+    seen = [ ]
+    candidates = [ ]
+    
+    for i in xrange(len(work.index)):
+        print i
+        measure = work.get_measure(i)
+        labels = work.get_labels(i)
+        for j in xrange(len(labels)):
+            datum = measure.data[j]
+            if labels[j] is None:
+                candidates.append([1e30,i,j,datum])
+            else:
+                seen.append(datum)
+
+    def see(datum):
+        for item in candidates:
+            offset = datum-item[3]
+            d = np.sum(offset*offset)
+            item[0] = min(item[0],d)
+    
+    if len(seen) > 100:
+        random.shuffle(seen)
+        seen = seen[:100]
+    for item in seen: 
+        print item
+        see(item)
+    
+    result = [ ]
+    for i in xrange(n):
+        if not candidates: break
+        candidates.sort()
+        item = candidates.pop()
+        result.append((item[1],item[2]))
+        see(item[3])
+    return result
+     
+        
 
 
 
@@ -35,6 +77,7 @@ url_map = Map([
     Rule('/image/<int:image_id>', endpoint='on_image'),
     Rule('/find_cell/<int:image_id>', endpoint='on_find_cell'),
     Rule('/classify', endpoint='on_classify'),
+    Rule('/next', endpoint='on_next'),
     Rule('/', endpoint='on_home'),
     ])
 
@@ -56,6 +99,9 @@ class Server(object):
             )
         self.env.globals['labels'] = self.labels
         self.env.globals['dir_name'] = self.work.name
+        
+        self.interesting = [ ]
+
     
     @Request.application
     def application(self, request):
@@ -101,6 +147,8 @@ class Server(object):
         return image_response(result)
     
     def on_cell(self, request, image_id, cell_id):
+        auto = int(request.args.get('auto','0'))
+    
         new_label = request.args.get('label',None)
         if 'key' in request.args:
             new_label = chr(int(request.args['key']))
@@ -114,6 +162,8 @@ class Server(object):
             else:
                 labels[cell_id] = new_label
             self.work.set_labels(image_id, labels)
+            if auto:
+                return redirect('/next')
             return redirect('/image/%d' % image_id)
             #return redirect('/cell/%d/%d' % (image_id, cell_id))
         
@@ -193,6 +243,14 @@ class Server(object):
             self.message = 'Classifier failed.'
         return redirect('/')
 
+    def on_next(self, request):
+        if not self.interesting:
+            self.interesting = select_interesting(self.work, 10)
+        if not self.interesting:
+            self.message = 'No more cells to classify.'
+            return redirect('/')
+        image_id, cell_id = self.interesting.pop(0)
+        return redirect('/cell/%d/%d?auto=1' % (image_id,cell_id))
 
 @config.help(
     'Interactively label cells.'

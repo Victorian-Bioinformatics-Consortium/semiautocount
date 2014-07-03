@@ -12,10 +12,6 @@
 </div>
 {% endif %}
 
-<form action="/classify">
-<button>Run classifier</button>
-</form>
-
 <h2>Images</h2>
 
 {% set row_cycler=cycler('#fff','#eee') %}
@@ -39,5 +35,19 @@
     </tr>
 {% endfor %}
 </table>
+
+<h2>Instructions</h2>
+
+<p>
+Press the "label cells" button and label some cells.
+Once you've labelled some cells, press the "run classifier" button to classify the rest.
+If the classification is unsatisfactory label more cells.
+If the classification is still unsatisfactory, 
+ask Paul to add more cell measurements and improve the classification algorithm.
+
+<p>
+Hint: You can use the keyboard to apply a label.
+
+<p>
 
 #endblock
