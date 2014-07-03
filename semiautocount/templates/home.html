@@ -18,8 +18,26 @@
 
 <h2>Images</h2>
 
-{% for name in index %}
-<a href="/image/{{ loop.index0 }}">{{name|escape}}</a><br>
+{% set row_cycler=cycler('#fff','#eee') %}
+
+<table>
+<tr style="background: {{ row_cycler.next() }}">
+<th></th>
+{% for label in labels %}
+    <th>{{label|escape}}</th>
 {% endfor %}
+</tr>
+
+{% for i in range(index|count) %}
+    <tr style="background: {{ row_cycler.next() }}">
+    <th>
+    <a href="/image/{{ loop.index0 }}">{{index[i]|escape}}</a><br>
+    </th>
+    {% for j in range(labels|count) %}
+        <td>{{counts[i][j]}}</td>
+    {% endfor %}
+    </tr>
+{% endfor %}
+</table>
 
 #endblock

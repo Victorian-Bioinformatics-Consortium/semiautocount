@@ -146,10 +146,11 @@ class Server(object):
         seg = self.work.get_segmentation(image_id)
         labels = self.work.get_labels(image_id)
         
-        if not self.work.has_classification(image_id):
-            calls = [ None ] * len(labels)
-        else:
-            calls = self.work.get_classification(image_id).call
+        #if not self.work.has_classification(image_id):
+        #    calls = [ None ] * len(labels)
+        #else:
+        #    calls = self.work.get_classification(image_id).call
+        calls = self.work.get_calls(image_id, False)
         
         label_points = [ ]
         for i, (label, call, bound) in enumerate(zip(labels,calls, seg.bounds)):
@@ -159,9 +160,18 @@ class Server(object):
         return self._response('image.html', locals())
     
     def on_home(self, request):
-        index = self.work.index
         message = self.message
         self.message = ''
+        
+        index = self.work.index
+        counts = [ [0]*len(self.labels) for i in xrange(len(index)) ]
+        for i in xrange(len(index)):
+            calls = self.work.get_calls(i, True)
+            for j, label in enumerate(self.labels):
+                for item in calls:
+                    if item == label:
+                        counts[i][j] += 1            
+           
         return self._response('home.html', locals())
 
     def on_find_cell(self, request, image_id):
