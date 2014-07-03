@@ -17,7 +17,6 @@ Python packages:
 - scipy
 - scikit-image (requires numpy, six)
 - scikit-learn (requires numpy)
-- Pillow
 - werkzeug
 - Jinja2
 - nesoni

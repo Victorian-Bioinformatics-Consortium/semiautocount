@@ -39,7 +39,6 @@ setup(
         'scipy',
         'scikit-image',
         'scikit-learn',
-        'Pillow',
         'werkzeug',
         'Jinja2',
         'nesoni',

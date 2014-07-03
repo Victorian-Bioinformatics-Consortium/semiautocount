@@ -5,7 +5,7 @@ import numpy
 from numpy import linalg
 from scipy import ndimage
 from skimage import morphology, color, segmentation
-from PIL import Image
+#from PIL import Image
 
 import nesoni
 from nesoni import config

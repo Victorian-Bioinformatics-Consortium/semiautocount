@@ -5,7 +5,8 @@ import numpy
 
 from scipy import ndimage
 
-from PIL import Image
+#from PIL import Image
+from skimage import io
 
 def _clipped_slice(length, from_start, from_length, to_start, to_length):
     shift = -min(0, from_start, to_start)
@@ -34,21 +35,24 @@ class Rect(collections.namedtuple('Rect','x y width height')):
         
 
 def load(filename):
-    image = Image.open(filename)
-    array = numpy.asarray(image).astype('float64') / 255.0
+    #image = Image.open(filename)
+    #array = numpy.asarray(image).astype('float64') / 255.0
+    array = io.imread(filename).astype('float64') / 255.0
     assert array.shape[2] == 3, 'Expected an RGB image: '+filename
     return array
 
 def save(filename, array):
-    a_output = numpy.clip(array,0.0,1.0) * 255.0
-    image = Image.fromarray(a_output.astype('uint8'))    
-    image.save(filename)
+    a_output = (numpy.clip(array,0.0,1.0) * 255.0).astype('uint8')
+    io.imsave(filename, a_output)
+    #image = Image.fromarray(a_output)    
+    #image.save(filename)
 
 def png_str(array):
-    a_output = numpy.clip(array,0.0,1.0) * 255.0
-    image = Image.fromarray(a_output.astype('uint8'))    
+    a_output = (numpy.clip(array,0.0,1.0) * 255.0).astype('uint8')
     f = StringIO.StringIO()
-    image.save(f, format='png')
+    #image = Image.fromarray(a_output.astype('uint8'))    
+    #image.save(f, format='png')
+    io.imsave(f, a_output)
     return f.getvalue()
 
 
