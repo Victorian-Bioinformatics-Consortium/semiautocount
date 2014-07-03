@@ -28,3 +28,47 @@ def wildcard(filenames, extensions):
                         result.append(os.path.join(item,item2))
                         break
     return result
+
+
+
+def cached(n):
+    def cache_decorator(func):
+        cache_name = '__cache__'+func.__name__
+        
+        def inner(self, *key):
+            if not hasattr(self, cache_name):
+                setattr(self,cache_name,({},[]))
+            cache_dict, cache_queue = getattr(self,cache_name)
+            if key not in cache_dict:
+                if len(cache_queue) >= n:
+                    del cache_dict[cache_queue.pop(0)]
+                cache_dict[key] = func(self, *key)
+                cache_queue.append(key)
+            return cache_dict[key]
+        
+        inner.__name__ = func.__name__
+        return inner
+    return cache_decorator
+
+
+def cached_named(n, *arg_names):
+    def cache_decorator(func):
+        cache_name = '__cache__'+func.__name__
+        
+        def inner(self, *args, **kwargs):
+            if not hasattr(self, cache_name):
+                setattr(self,cache_name,({},[]))
+            cache_dict, cache_queue = getattr(self,cache_name)
+            key = tuple(kwargs[item] for item in arg_names)
+            if key not in cache_dict:
+                if len(cache_queue) >= n:
+                    del cache_dict[cache_queue.pop(0)]
+                cache_dict[key] = func(self, **dict(zip(arg_names,key)))
+                cache_queue.append(key)
+            return cache_dict[key]
+        
+        inner.__name__ = func.__name__
+        return inner
+    return cache_decorator
+
+

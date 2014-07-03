@@ -172,7 +172,7 @@ def segment_image(prefix, filename, min_area):
         ]
     labels -= 1 #Labels start from zero, index into bounds
     
-    print prefix, 'Done'
+    print prefix, 'Saving'
     
     #test = color.label2rgb(labels-1, image)
     
@@ -195,9 +195,7 @@ def segment_image(prefix, filename, min_area):
     #test2 = image.copy()
     #test2 /= numpy.reshape(color_fg, (height,width,3))
     #images.save(prefix+'-corrected.png', test2)
-    
-    
-    
+            
     images.save(prefix+'.png', image)
     
     result = Segmentation()
@@ -209,6 +207,8 @@ def segment_image(prefix, filename, min_area):
     util.clear(prefix+'-measure.pgz')
     util.clear(prefix+'-classification.pgz')
     util.save(prefix+'-labels.pgz', [ None ] * result.n_cells)
+
+    print prefix, 'Done'
 
 
 

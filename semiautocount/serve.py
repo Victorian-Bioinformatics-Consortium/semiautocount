@@ -18,7 +18,7 @@ import jinja2
 from scipy import ndimage
 from nesoni import config
 
-from . import images, autocount_workspace, classify
+from . import images, autocount_workspace, classify, util
 
 def image_response(image):
     return Response(
@@ -88,6 +88,7 @@ class Server(object):
             self.env.get_template(template).render(vars),
             mimetype='text/html'
             )
+    
             
     def on_cell_image(self, request, image_id, cell_id):
         image = self.work.get_image(image_id)
@@ -129,8 +130,10 @@ class Server(object):
     
         return self._response('cell.html', locals())
 
-    def on_image_image(self, request, image_id):
-        result = self.work.get_image(image_id)
+    @util.cached_named(1, 'image_id')
+    def on_image_image(self, image_id):
+    #def on_image_image(self, request, image_id):
+        result = self.work.get_image(image_id).copy()
         seg = self.work.get_segmentation(image_id)
         border = ndimage.maximum_filter(seg.labels,size=(3,3)) != ndimage.minimum_filter(seg.labels,size=(3,3))
         result[border] = 0.0

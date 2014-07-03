@@ -27,6 +27,7 @@ class Autocount_workspace(workspace.Workspace):
     def set_config(self, config):
         util.save(self/('config','config.pgz'), config)
     
+    @util.cached(1)
     def get_image(self, i):
         return images.load(self/('images',self.index[i]+'.png'))
 
