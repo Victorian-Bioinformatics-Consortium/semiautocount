@@ -200,7 +200,7 @@ class Server(object):
         #    calls = [ None ] * len(labels)
         #else:
         #    calls = self.work.get_classification(image_id).call
-        calls = self.work.get_calls(image_id, False)
+        calls = self.work.get_calls(image_id, True, False)
         
         label_points = [ ]
         for i, (label, call, bound) in enumerate(zip(labels,calls, seg.bounds)):
@@ -215,12 +215,17 @@ class Server(object):
         
         index = self.work.index
         counts = [ [0]*len(self.labels) for i in xrange(len(index)) ]
+        manual_counts = [ [0]*len(self.labels) for i in xrange(len(index)) ]
         for i in xrange(len(index)):
-            calls = self.work.get_calls(i, True)
+            calls = self.work.get_calls(i, True, True)
+            manual_calls = self.work.get_calls(i, False, True)
             for j, label in enumerate(self.labels):
                 for item in calls:
                     if item == label:
-                        counts[i][j] += 1            
+                        counts[i][j] += 1
+                for item in manual_calls:
+                    if item == label:
+                        manual_counts[i][j] += 1  
            
         return self._response('home.html', locals())
 

@@ -9,9 +9,15 @@ class Multivar(collections.namedtuple(
     'Multivar','icovar const')):
     
     def logps(self, vecs):
-        a = numpy.sum(self.icovar[None,:,:] * vecs[:,None,:], axis=2)
-        b = numpy.sum(a * vecs, axis=1)
-        return b * -0.5 + self.const
+        #a = numpy.sum(self.icovar[None,:,:] * vecs[:,None,:], axis=2)
+        #b = numpy.sum(a * vecs, axis=1)
+        #return b * -0.5 + self.const
+        
+        total = numpy.zeros(vecs.shape[0])
+        for i in xrange(self.icovar.shape[0]):
+            for j in xrange(self.icovar.shape[1]):
+                total += self.icovar[i,j] * (vecs[:,i]*vecs[:,j])
+        return total * -0.5 + self.const
     
     
 def estimate_multivar(vecs):

@@ -60,6 +60,8 @@ The images are segmented into cells. eg
 
     semiac segment: mydir inputimagesdir
 
+(Note: Any existing images and labels in mydir will be deleted.)
+
 2\. Configure the working directory with "semiac configure:", eg
 
     semiac configure: mydir labels: x=mis-segmentation d=debris w=white-blood-cell 0=uninfected 1=singlet 2=doublet
@@ -69,11 +71,21 @@ local webserver which you can then interact with in your browser.
 
     semiac label: mydir
 
-4\. Use machine learning to classify remaining cells with "semiac classify:".
+Click on "Label cells" and label cells until the classification is satisfactory.
+
+
+### Fully automatic workflow
+
+Carry out steps 1 and 2 as above then:
+
+3\. Link mydir to a working directory you've previously created containing training data:
+
+    semiac configure: mydir training: mytrainingdir
+
+4\. Run the classifier from the command line:
 
     semiac classify: mydir
 
-Repeat steps 3 and 4 until the classification is satisfactory.
 
 ### Importing Cell Counting Aid labels
 
@@ -82,11 +94,6 @@ Having performed steps 1 and 2 above, use:
     semiac import: mydir inputimagesdir
     
 This will import any .txt files in inputimagesdir as Cell Counting Aid cell labels.
-
-
-## TODO
-
-"semiac import:" should also allow import from old Semiautocount directories.
 
 
 

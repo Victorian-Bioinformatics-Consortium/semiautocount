@@ -209,6 +209,9 @@ def segment_image(prefix, filename, min_area):
     util.save(prefix+'-labels.pgz', [ None ] * result.n_cells)
 
     print prefix, 'Done'
+    
+    #import resource
+    #print 'maxrss', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
 
 
 

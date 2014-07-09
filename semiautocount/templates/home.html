@@ -21,6 +21,7 @@
 <th></th>
 {% for label in labels %}
     <th>{{label|escape}}</th>
+    <th></th>
 {% endfor %}
 </tr>
 
@@ -31,6 +32,7 @@
     </th>
     {% for j in range(labels|count) %}
         <td>{{counts[i][j]}}</td>
+        <td style="color: #080; font-size: 80%; padding-left: 0em;">{% if manual_counts[i][j] %} ({{manual_counts[i][j]}}) {% endif %}</td>
     {% endfor %}
     </tr>
 {% endfor %}
@@ -43,10 +45,10 @@ Press the "label cells" button and label some cells.
 Once you've labelled some cells, press the "run classifier" button to classify the rest.
 If the classification is unsatisfactory label more cells.
 If the classification is still unsatisfactory, 
-ask Paul to add more cell measurements and improve the classification algorithm.
+ask Paul to improve the classification algorithm.
 
 <p>
-Hint: You can use the keyboard to apply a label.
+Hint: You can use the keyboard to apply a cell label.
 
 <p>
 
