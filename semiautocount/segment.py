@@ -16,6 +16,9 @@ class Segmentation(object): pass
 
 
 def segment_image(prefix, filename, min_area):
+    #import resource ; r = resource.getrusage(resource.RUSAGE_SELF)
+    #print 'maxrss start', r.ru_maxrss
+
     image = images.load(filename) #[:400, :400]
     height = image.shape[0]
     width = image.shape[1]
@@ -26,12 +29,12 @@ def segment_image(prefix, filename, min_area):
     
     # Allow for non-uniform lighting over image using a quadratic model
     
-    one = numpy.ones((height,width)).ravel()
-    x = numpy.empty((height,width))
-    x[:,:] = numpy.arange(width)[None,:]
+    one = numpy.ones((height,width), dtype='float32').ravel()
+    x = numpy.empty((height,width), dtype='float32')
+    x[:,:] = numpy.arange(width, dtype='float32')[None,:]
     x = x.ravel()
-    y = numpy.empty((height,width))
-    y[:,:] = numpy.arange(height)[:,None]
+    y = numpy.empty((height,width), dtype='float32')
+    y[:,:] = numpy.arange(height, dtype='float32')[:,None]
     y = y.ravel()
     
     pred = numpy.array((
@@ -46,11 +49,15 @@ def segment_image(prefix, filename, min_area):
         #x*x*y,
         #y*y*x,
         )).transpose()
+    
+    del one,x,y
+    
     def fit(mask):
-        result = numpy.empty((height*width,3))
+        result = numpy.zeros((height*width,3), dtype='float32')
         for i in xrange(3):
             model = linalg.lstsq(pred[mask],image_raveled[mask,i])[0]
-            result[:,i] = numpy.sum(pred * model[None,:], 1)
+            for j in xrange(pred.shape[1]):
+                result[:,i] += pred[:,j] * model[j]
         return result
     
     average = numpy.average(image_raveled, axis=0)
@@ -62,6 +69,7 @@ def segment_image(prefix, filename, min_area):
     #icovar_fg = icovar_bg = stats.inverse_covariance(offsets)
     #mv_fg = mv_bg = stats.estimate_multivar(offsets)
     mv = stats.estimate_multivar(offsets)
+    del offsets
     p_fg = 0.5
     
     i = 0
@@ -83,6 +91,7 @@ def segment_image(prefix, filename, min_area):
         logp_bg = mv.logps(image_raveled - color_bg) + numpy.log(1.0-p_fg)
         logp_fg = mv.logps(image_raveled - color_fg) + numpy.log(p_fg)
         fg = logp_fg > logp_bg
+        del logp_bg, logp_fg
         
         p_fg = numpy.mean(fg)
         #print logp_bg[:10]
@@ -101,6 +110,8 @@ def segment_image(prefix, filename, min_area):
         offsets[fg,:] -= color_fg[fg,:]
         offsets[~fg,:] -= color_bg[~fg,:]
         mv = stats.estimate_multivar(offsets)
+        del offsets
+        
         #mv_fg = mv_bg = stats.estimate_multivar(offsets)
         #icovar = stats.inverse_covariance(offsets)
         #icovar_fg = stats.inverse_covariance(image_raveled[fg,:] - color_fg[None,:])
@@ -111,6 +122,9 @@ def segment_image(prefix, filename, min_area):
         i += 1
    
     fg = numpy.reshape(fg,(height,width))
+    
+    pred = None
+    del color_fg,color_bg
         
     print prefix, 'Detect size'
     
@@ -210,8 +224,8 @@ def segment_image(prefix, filename, min_area):
 
     print prefix, 'Done'
     
-    #import resource
-    #print 'maxrss', resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+    #import resource ; r = resource.getrusage(resource.RUSAGE_SELF)
+    #print 'maxrss end', r.ru_maxrss
 
 
 

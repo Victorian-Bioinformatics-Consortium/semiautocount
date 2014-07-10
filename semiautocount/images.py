@@ -37,7 +37,7 @@ class Rect(collections.namedtuple('Rect','x y width height')):
 def load(filename):
     #image = Image.open(filename)
     #array = numpy.asarray(image).astype('float64') / 255.0
-    array = io.imread(filename).astype('float64') / 255.0
+    array = io.imread(filename).astype('float32') / 255.0
     assert array.shape[2] == 3, 'Expected an RGB image: '+filename
     return array
 
