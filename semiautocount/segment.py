@@ -232,7 +232,9 @@ def segment_image(prefix, filename, min_area):
 @config.help(
     'Create a Semiautocount working directory based on a set of images. '
     'Images are segmented into cells.',
-    'ANY EXISTING IMAGES IN DIRECTORY WILL BE FORGOTTEN'
+    'ANY EXISTING IMAGES IN DIRECTORY WILL BE FORGOTTEN\n\n'
+    'If your computer has limited memory and multiple codes, '
+    'limit to a single core with --make-cores 1'
     )
 @config.Float_flag('min_area',
     'Minimum cell area. '

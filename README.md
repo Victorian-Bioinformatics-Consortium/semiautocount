@@ -60,6 +60,9 @@ The images are segmented into cells. eg
 
     semiac segment: mydir inputimagesdir
 
+(Note: If you have limited memory and multiple cores, you may need
+to limit to a single core with --make-cores 1)
+
 (Note: Any existing images and labels in mydir will be deleted.)
 
 2\. Configure the working directory with "semiac configure:", eg
