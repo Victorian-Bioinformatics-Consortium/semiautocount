@@ -4,7 +4,7 @@ import os
 import numpy
 from numpy import linalg
 from scipy import ndimage
-from skimage import morphology, color, segmentation
+from skimage import morphology, color, segmentation, filter
 #from PIL import Image
 
 import nesoni
@@ -15,19 +15,21 @@ from . import images, stats, util, autocount_workspace
 class Segmentation(object): pass
 
 
-def segment_image(prefix, filename, min_area):
+def segment_image(prefix, filename, min_area, blur):
     #import resource ; r = resource.getrusage(resource.RUSAGE_SELF)
     #print 'maxrss start', r.ru_maxrss
 
-    image = images.load(filename) #[:400, :400]
+    image = images.load(filename)
     height = image.shape[0]
     width = image.shape[1]
     
     print prefix, 'FG/BG'
     
-    image_raveled = numpy.reshape(image,(height*width,3))
+    blurred = filter.gaussian_filter(image, blur, multichannel=True)
+    image_raveled = numpy.reshape(blurred,(height*width,3))
+    del blurred
     
-    # Allow for non-uniform lighting over image using a quadratic model
+    # Allow for non-uniform lighting over image using a linear model
     
     one = numpy.ones((height,width), dtype='float32').ravel()
     x = numpy.empty((height,width), dtype='float32')
@@ -41,9 +43,9 @@ def segment_image(prefix, filename, min_area):
         one,
         x,
         y,
-        x*x,
-        y*y,
-        x*y,
+        #x*x,
+        #y*y,
+        #x*y,
         #x*x*x,
         #y*y*y,
         #x*x*y,
@@ -59,6 +61,7 @@ def segment_image(prefix, filename, min_area):
             for j in xrange(pred.shape[1]):
                 result[:,i] += pred[:,j] * model[j]
         return result
+
     
     average = numpy.average(image_raveled, axis=0)
     # Initial guess
@@ -94,6 +97,8 @@ def segment_image(prefix, filename, min_area):
         del logp_bg, logp_fg
         
         p_fg = numpy.mean(fg)
+        p_fg = max(0.05,min(0.95,p_fg))
+        
         #print logp_bg[:10]
         #print logp_fg[:10]
         #print p_fg
@@ -233,12 +238,15 @@ def segment_image(prefix, filename, min_area):
     'Create a Semiautocount working directory based on a set of images. '
     'Images are segmented into cells.',
     'ANY EXISTING IMAGES IN DIRECTORY WILL BE FORGOTTEN\n\n'
-    'If your computer has limited memory and multiple codes, '
+    'If your computer has limited memory and multiple cores, '
     'limit to a single core with --make-cores 1'
     )
 @config.Float_flag('min_area',
     'Minimum cell area. '
     'Unit is relative to scaling constant derived from the image.'
+    )
+@config.Float_flag('blur',
+    'Segmentation is performed on a blurred version of the image. This is the blur radius in pixels.'
     )
 @config.Main_section('images',
     'Image filenames, or a directory containing images.'
@@ -247,6 +255,7 @@ class Segment(config.Action_with_output_dir):
     _workspace_class = autocount_workspace.Autocount_workspace
     
     min_area = 20.0
+    blur = 2.0
     images = [ ]
 
     def run(self):
@@ -268,7 +277,7 @@ class Segment(config.Action_with_output_dir):
 
         with nesoni.Stage() as stage:        
             for name, filename in zip(index, filenames):
-                stage.process(segment_image, work/('images',name), filename, self.min_area)
+                stage.process(segment_image, work/('images',name), filename, min_area=self.min_area, blur=self.blur)
 
         util.save(work/('config','index.pgz'), index)
 
