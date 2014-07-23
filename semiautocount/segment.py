@@ -30,50 +30,57 @@ def segment_image(prefix, filename, min_area, blur):
     del blurred
     
     # Allow for non-uniform lighting over image using a linear model
+        
+    #pred = [ ]
+    #order = 2
+    #for i in xrange(order):
+    #    for j in xrange(order):
+    #        pred.append((
+    #            numpy.cos(numpy.linspace(0,numpy.pi*i, width)).astype('float32')[None,:] * 
+    #            numpy.cos(numpy.linspace(0,numpy.pi*j, height)).astype('float32')[:,None]  ).ravel())    
+    #pred = numpy.transpose(pred)
     
-    one = numpy.ones((height,width), dtype='float32').ravel()
-    x = numpy.empty((height,width), dtype='float32')
-    x[:,:] = numpy.arange(width, dtype='float32')[None,:]
-    x = x.ravel()
-    y = numpy.empty((height,width), dtype='float32')
-    y[:,:] = numpy.arange(height, dtype='float32')[:,None]
-    y = y.ravel()
-    
-    pred = numpy.array((
-        one,
-        x,
-        y,
-        #x*x,
-        #y*y,
-        #x*y,
-        #x*x*x,
-        #y*y*y,
-        #x*x*y,
-        #y*y*x,
-        )).transpose()
-    
-    del one,x,y
-    
-    def fit(mask):
-        result = numpy.zeros((height*width,3), dtype='float32')
-        for i in xrange(3):
-            model = linalg.lstsq(pred[mask],image_raveled[mask,i])[0]
-            for j in xrange(pred.shape[1]):
-                result[:,i] += pred[:,j] * model[j]
-        return result
+    #one = numpy.ones((height,width), dtype='float32').ravel()
+    #x = numpy.empty((height,width), dtype='float32')
+    #x[:,:] = numpy.linspace(0.0, 1.0, width)[None,:]
+    #x = x.ravel()
+    #y = numpy.empty((height,width), dtype='float32')
+    #y[:,:] = numpy.linspace(0.0, 1.0, height)[:,None]
+    #y = y.ravel()
+    #pred = numpy.array((
+    #    one,
+    #    #x,
+    #    #y,
+    #    #x*x,
+    #    #y*y,
+    #    #x*y,
+    #    #x*x*x,
+    #    #y*y*y,
+    #    #x*x*y,
+    #    #y*y*x,
+    #    )).transpose()    
+    #del one,x,y
+    #
+    #def fit(mask):
+    #    result = numpy.zeros((height*width,3), dtype='float32')
+    #    for i in xrange(3):
+    #        model = linalg.lstsq(pred[mask],image_raveled[mask,i])[0]
+    #        for j in xrange(pred.shape[1]):
+    #            result[:,i] += pred[:,j] * model[j]
+    #    return result
 
     
-    average = numpy.average(image_raveled, axis=0)
+    average = numpy.mean(image_raveled, axis=0)
     # Initial guess
-    color_bg = (average*1.5)[None,:]
-    color_fg = (average*0.5)[None,:]
+    color_bg = (average*1.5) #[None,:]
+    color_fg = (average*0.5) #[None,:]
     
-    offsets = image_raveled - average
+    #offsets = image_raveled - average
     #icovar_fg = icovar_bg = stats.inverse_covariance(offsets)
     #mv_fg = mv_bg = stats.estimate_multivar(offsets)
-    mv = stats.estimate_multivar(offsets)
-    del offsets
-    p_fg = 0.5
+    #mv = stats.estimate_indivar(offsets)
+    #del offsets
+    #p_fg = 0.5
     
     i = 0
     while True:
@@ -91,13 +98,17 @@ def segment_image(prefix, filename, min_area, blur):
         #d_fg = stats.length2s(icovar_fg, image_raveled - color_fg[None,:])
         #fg = d_fg < d_bg
         
-        logp_bg = mv.logps(image_raveled - color_bg) + numpy.log(1.0-p_fg)
-        logp_fg = mv.logps(image_raveled - color_fg) + numpy.log(p_fg)
-        fg = logp_fg > logp_bg
-        del logp_bg, logp_fg
+        #logp_bg = mv.logps(image_raveled - color_bg) #+ numpy.log(1.0-p_fg)
+        #logp_fg = mv.logps(image_raveled - color_fg) #+ numpy.log(p_fg)
+        #fg = logp_fg > logp_bg
+        #del logp_bg, logp_fg
         
-        p_fg = numpy.mean(fg)
-        p_fg = max(0.05,min(0.95,p_fg))
+        mid = (color_bg+color_fg)*0.5
+        proj = (color_fg-color_bg)
+        fg = numpy.sum(image_raveled * proj[None,:], axis=1) > numpy.sum(mid*proj)
+        
+        #p_fg = numpy.mean(fg)
+        #p_fg = max(0.05,min(0.95,p_fg))
         
         #print logp_bg[:10]
         #print logp_fg[:10]
@@ -105,17 +116,17 @@ def segment_image(prefix, filename, min_area, blur):
         
         if i >= 5: break
         
-        #color_fg = numpy.median(image_raveled[fg,:],axis=0)
-        #color_bg = numpy.median(image_raveled[~fg,:],axis=0)
+        color_fg = numpy.mean(image_raveled[fg,:],axis=0)
+        color_bg = numpy.mean(image_raveled[~fg,:],axis=0)
         
-        color_fg = fit(fg)
-        color_bg = fit(~fg)
+        #color_fg = fit(fg)
+        #color_bg = fit(~fg)
         
-        offsets = image_raveled.copy()
-        offsets[fg,:] -= color_fg[fg,:]
-        offsets[~fg,:] -= color_bg[~fg,:]
-        mv = stats.estimate_multivar(offsets)
-        del offsets
+        #offsets = image_raveled.copy()
+        #offsets[fg,:] -= color_fg #[fg,:]
+        #offsets[~fg,:] -= color_bg #[~fg,:]
+        #mv = stats.estimate_indivar(offsets)
+        #del offsets
         
         #mv_fg = mv_bg = stats.estimate_multivar(offsets)
         #icovar = stats.inverse_covariance(offsets)
@@ -134,24 +145,24 @@ def segment_image(prefix, filename, min_area, blur):
     print prefix, 'Detect size'
     
     sizer = 1.0
+    n1 = numpy.sum(fg)
     while True:
-        n1 = numpy.sum(images.erode(fg, sizer))
-        n2 = numpy.sum(images.erode(fg, sizer*2.0))
-        if n2 < n1*0.5: break
+        n2 = numpy.sum(images.erode(fg, sizer))
+        if n2 < n1*0.3: break
         sizer += 0.1
     print prefix, 'Size', sizer
     
     print prefix, 'Cleave'
     
-    cores = images.cleave(fg, sizer * 2.5)
+    cores = images.cleave(fg, sizer)
     
     print prefix, 'Segment'
     
     core_labels, num_features = ndimage.label(cores)
     
     #dist = ndimage.distance_transform_edt(~cores)
-  #  dist = -ndimage.distance_transform_edt(fg)    
-    dist = images.hessian(ndimage.gaussian_filter(fg.astype('float64'), sizer*2.5)).i1
+    #dist = -ndimage.distance_transform_edt(fg)    
+    dist = images.hessian(ndimage.gaussian_filter(fg.astype('float64'), sizer)).i1
     
     labels = morphology.watershed(dist, core_labels, mask=fg)
 
@@ -254,8 +265,8 @@ def segment_image(prefix, filename, min_area, blur):
 class Segment(config.Action_with_output_dir):
     _workspace_class = autocount_workspace.Autocount_workspace
     
-    min_area = 20.0
-    blur = 2.0
+    min_area = 4.0
+    blur = 1.5
     images = [ ]
 
     def run(self):

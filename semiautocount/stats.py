@@ -36,6 +36,30 @@ def estimate_multivar(vecs):
     return Multivar(icovar, const)
 
 
+class Indivar(collections.namedtuple(
+    'Indivar','ivar const')):
+
+    def logps(self, vecs):
+        total = numpy.zeros(vecs.shape[0])
+        for i in xrange(self.ivar.shape[0]):
+            total += self.ivar[i] * (vecs[:,i]*vecs[:,i])
+        return total * -0.5 + self.const
+
+def estimate_indivar(vecs):
+    n, m = vecs.shape
+    
+    var = numpy.zeros(m)
+    for i in xrange(m):
+        var[i] = numpy.sum(vecs[:,i]*vecs[:,i])
+    var /= n
+    
+    ivar = 1.0 / var
+    
+    const = -0.5 * (m*numpy.log(2.0*numpy.pi) + numpy.sum(numpy.log(var)))
+
+    return Indivar(ivar, const)
+
+
 
 def inverse_covariance(vecs):
     n, m = vecs.shape
