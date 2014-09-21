@@ -6,7 +6,7 @@ allow interactive classification.
 
 """
 
-import socket, os, collections, traceback, random
+import socket, os, collections, traceback, random, webbrowser
 
 from werkzeug.wrappers import Request, Response
 from werkzeug.routing import Map, Rule
@@ -20,7 +20,7 @@ from nesoni import config
 
 import numpy as np
 
-from . import images, autocount_workspace, classify, util
+from . import images, autocount_workspace, classify, report, util
 
 def image_response(image):
     return Response(
@@ -114,7 +114,7 @@ class Server(object):
             #print 'Exception:', e
             return e
 
-    def serve(self):
+    def serve(self, open_browser=True):
         from wsgiref.simple_server import make_server
         n = 8000
         while True:
@@ -124,10 +124,21 @@ class Server(object):
                 break
             except socket.error:
                 n += 1
+        self.url = 'http://localhost:%d' % n
+
         print
-        print 'http://localhost:%d' % n
+        print self.url
         print
-        httpd.serve_forever()
+        print 'Ctrl-C to shut down.'
+        print
+        
+        try:
+            if open_browser:
+                webbrowser.open(self.url, new=1)
+        
+            httpd.serve_forever()
+        finally:
+            del self.url
     
     def _response(self, template, vars):
         return Response(
@@ -246,6 +257,10 @@ class Server(object):
         except:
             traceback.print_exc()
             self.message = 'Classifier failed.'
+            
+        # In any case, generate output files
+        report.Report(self.work.working_dir).run()
+        
         return redirect('/')
 
     def on_next(self, request):
@@ -257,14 +272,30 @@ class Server(object):
         image_id, cell_id = self.interesting.pop(0)
         return redirect('/cell/%d/%d?auto=1' % (image_id,cell_id))
 
+
+
+
 @config.help(
-    'Interactively label cells.'
+    'Interactively label cells.',
+    'Starts a local web server which you can interact with '
+    'in your web browser.'
+    '\n\n'
+    'Note: The BROWSER environment variable '
+    'can be used to control the choice of browser '
+    'as described in '
+    'https://docs.python.org/2/library/webbrowser.html'
     )
+@config.Bool_flag('browser', 'Open web browser.')
 class Label(config.Action_with_working_dir):
     _workspace_class = autocount_workspace.Autocount_workspace
+    
+    browser = True
 
     def run(self):
-        Server(self.working_dir).serve()
+        try:
+            Server(self.working_dir).serve(self.browser)
+        except KeyboardInterrupt:
+            pass
 
 
 

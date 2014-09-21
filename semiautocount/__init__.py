@@ -8,6 +8,7 @@ from .segment import Segment
 from .serve import Label
 from .importer import Import
 from .classify import Classify
+from .report import Report
 
 def main():
     nesoni.run_toolbox([
@@ -17,6 +18,7 @@ def main():
             Import,
             Label,
             Classify,
+            Report,
             'https://github.com/Victorian-Bioinformatics-Consortium/semiautocount',
             ], 
         show_make_flags=False,

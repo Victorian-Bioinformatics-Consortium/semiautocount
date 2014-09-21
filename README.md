@@ -70,10 +70,11 @@ to limit to a single core with --make-cores 1)
     semiac configure: mydir labels: x=mis-segmentation d=debris w=white-blood-cell 0=uninfected 1=singlet 2=doublet
 
 3\. Interactively label some of the cells with "semiac label:". This starts a 
-local webserver which you can then interact with in your browser.
+local webserver which you can then interact with in your web-browser.
 
     semiac label: mydir
 
+This will display a url (eg http://localhost:8000). In your web-browser, go to this url.
 Click on "Label cells" and label cells until the classification is satisfactory.
 
 
@@ -89,6 +90,10 @@ Carry out steps 1 and 2 as above then:
 
     semiac classify: mydir
 
+5\. Generate output files:
+
+    semiac report: mydir
+
 
 ### Importing Cell Counting Aid labels
 
@@ -97,6 +102,29 @@ Having performed steps 1 and 2 above, use:
     semiac import: mydir inputimagesdir
     
 This will import any .txt files in inputimagesdir as Cell Counting Aid cell labels.
+
+
+## Output
+
+In the directory created by Semiautocount:
+
+* The file "totals.csv" contains the total number of each cell type 
+  seen in each image.
+  For each cell, the manual label is used if present 
+  otherwise the automatic classification is used.
+
+* The file "manual_totals.csv" contains the total number of manually labelled
+  cells of each type in each image.
+
+* The subdirectory "coordinates" contains a file for each image with a line
+  for each cell, comprising x,y,call,manual_label where
+  * x and y are the coordinates of the center of the cell.
+  * call is the cell classification. 
+    If the cell has been manually labeled
+    this will always match the manual label, 
+    otherwise if will have the automatic classification.
+  * manual_label is the label you gave to the cell if the cell was manually labeled.
+
 
 
 
