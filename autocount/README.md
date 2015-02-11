@@ -9,7 +9,7 @@ Plasmodium Autocount identifies cells using a circlular Hough transform, then lo
 
 This software is described in:
 
-  Ma, C., Harrison, P., Wang, L., & Coppel, R. L. (2010). [Automated estimation of parasitaemia of Plasmodium yoelii-infected mice by digital image analysis of Giemsa-stained thin blood smears.](http://www.malariajournal.com/content/9/1/348) Malaria Journal, 9(1), 348. doi:10.1186/1475-2875-9-348
+    Ma, C., Harrison, P., Wang, L., & Coppel, R. L. (2010). [Automated estimation of parasitaemia of Plasmodium yoelii-infected mice by digital image analysis of Giemsa-stained thin blood smears.](http://www.malariajournal.com/content/9/1/348) Malaria Journal, 9(1), 348. doi:10.1186/1475-2875-9-348
 
 
 
