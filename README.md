@@ -6,9 +6,9 @@ With the closure of the VBC and uncertain future of the VBC website at vicbioinf
 
 * [autocount/](autocount/)
 
-Semiautocount was intended as a new version of Plasmodium Autocount incorporating machine learning from manually annotated cells. Count types of cell in a blood smear based on interactive training, for example to measure the stage and severity of malarial infection.
+Semiautocount was intended as a new version of Plasmodium Autocount incorporating machine learning from manually annotated cells. The goal was to count types of cell in a blood smear based on interactive training, for example to measure the stage and severity of malarial infection.
 
-Development of Semiautocount is on hold, possibly permanently. The code is functional but has not undergone much tuning. In particular there is considerable score to extend the set of measurements used to classify cells.
+Development of Semiautocount is on hold, possibly permanently. The code is functional but has not undergone much tuning. In particular there is considerable scope to extend the set of measurements used to classify cells.
 
 This is free software distributed under the GPL version 2 license.
 
