@@ -1,6 +1,10 @@
 Plasmodium Autocount and Cell Counting Aid
 ===
 
+<div style="float: right; margin: 1em">
+<img src="autocount-output-sample.png"/>
+</div>
+
 Plasmodium Autocount is a python script for counting blood cells infected with malaria on a blood smear. With the closure of the VBC and uncertain future of the VBC website at vicbioinformatic.com, the Plasmodium Autocount code is preserved in this directory. This software was developed by Paul Harrison and Charles Ma at Monash University.
 
 Plasmodium Autocount identifies cells using a circlular Hough transform, then looks for stained spots within cells as evidence of infection. Identified cells that are misshapen (debris on the slide) or have too much stain (white blood cells) are discarded.
