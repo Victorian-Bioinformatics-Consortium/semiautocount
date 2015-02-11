@@ -1,9 +1,17 @@
-# Semiautocount
+# Plasmodium Autocount and Semiautocount
+
+Plasmodium Autocount is a python script for counting blood cells infected with malaria on a blood smear.
+
+With the closure of the VBC and uncertain future of the VBC website at vicbioinformatic.com, the Plasmodium Autocount code is preserved here:
+
+* [autocount/](autocount/)
+
+Semiautocount was intended as a new version of Plasmodium Autocount incorporating machine learning from manually annotated cells.
 
 Count types of cell in a blood smear based on interactive training,
 for example to measure the stage and severity of malarial infection.
 
-Currently under development.
+Development of Semiautocount is on hold, possibly permanently. The code is functional but has not undergone much tuning. In particular there is considerable score to extend the set of measurements used to classify cells.
 
 This is free software distributed under the GPL version 2 license.
 
@@ -22,7 +30,7 @@ Python packages:
 - nesoni
 
 pip installation will attempt to install these, however note that
-as at June 2014, installing scikit-image and scikit-learn require 
+as at June 2014, installing scikit-image and scikit-learn require
 numpy and six to already be installed or things break.
 
 ### Windows requirements
@@ -31,15 +39,15 @@ I recommend using the Anaconda Python installer:
 
 http://continuum.io/downloads
 
-Install the Python 2.7 version, 32 or 64 bit as appropriate. Once 
-Anaconda is installed, Semiautocount can be installed and upgraded 
+Install the Python 2.7 version, 32 or 64 bit as appropriate. Once
+Anaconda is installed, Semiautocount can be installed and upgraded
 using pip as shown below.
 
 
 ## Installation
 
     pip install https://github.com/Victorian-Bioinformatics-Consortium/semiautocount/archive/master.zip
-  
+
 This gives you:
 
 - semiac command line program  
@@ -69,7 +77,7 @@ to limit to a single core with --make-cores 1)
 
     semiac configure: mydir labels: x=mis-segmentation d=debris w=white-blood-cell 0=uninfected 1=singlet 2=doublet
 
-3\. Interactively label some of the cells with "semiac label:". This starts a 
+3\. Interactively label some of the cells with "semiac label:". This starts a
 local webserver which you can then interact with in your browser.
 
     semiac label: mydir
@@ -95,9 +103,5 @@ Carry out steps 1 and 2 as above then:
 Having performed steps 1 and 2 above, use:
 
     semiac import: mydir inputimagesdir
-    
+
 This will import any .txt files in inputimagesdir as Cell Counting Aid cell labels.
-
-
-
-
