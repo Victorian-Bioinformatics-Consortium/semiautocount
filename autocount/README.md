@@ -1,20 +1,17 @@
 Plasmodium Autocount and Cell Counting Aid
 ===
 
-Plasmodium Autocount is a python script for counting blood cells infected with malaria on a blood smear.
-
-With the closure of the VBC and uncertain future of the VBC website at vicbioinformatic.com, the Plasmodium Autocount code is preserved in this directory.
-
-This software was developed by Paul Harrison and Charles Ma at Monash University.
+Plasmodium Autocount is a python script for counting blood cells infected with malaria on a blood smear. With the closure of the VBC and uncertain future of the VBC website at vicbioinformatic.com, the Plasmodium Autocount code is preserved in this directory. This software was developed by Paul Harrison and Charles Ma at Monash University.
 
 Plasmodium Autocount identifies cells using a circlular Hough transform, then looks for stained spots within cells as evidence of infection. Identified cells that are misshapen (debris on the slide) or have too much stain (white blood cells) are discarded.
-Download
 
-Requirements: Python 2, Python Imaging Library, numpy, scipy
+**Requirements:** Python 2, Python Imaging Library, numpy, scipy
 
 This software is described in:
 
-Ma, C., Harrison, P., Wang, L., & Coppel, R. L. (2010). [Automated estimation of parasitaemia of Plasmodium yoelii-infected mice by digital image analysis of Giemsa-stained thin blood smears.](http://www.malariajournal.com/content/9/1/348) Malaria Journal, 9(1), 348. doi:10.1186/1475-2875-9-348
+  Ma, C., Harrison, P., Wang, L., & Coppel, R. L. (2010). [Automated estimation of parasitaemia of Plasmodium yoelii-infected mice by digital image analysis of Giemsa-stained thin blood smears.](http://www.malariajournal.com/content/9/1/348) Malaria Journal, 9(1), 348. doi:10.1186/1475-2875-9-348
+
+
 
 Cell Counting Aid
 ---
@@ -23,13 +20,11 @@ Cell Counting Aid is software that allows users to keep records of cell counting
 
 To install, open the .zip file and run Setup.
 
-Requirements: Microsoft Windows
+**Requirements:** Microsoft Windows
 
 
 
 Sample Images
 ---
 
-Sample images, with manual annotation of infected an uninfected cells (made with Cell Counting Aid).
-
-sample-images.zip
+sample-images.zip provides sample images, with manual annotation of infected an uninfected cells (made with Cell Counting Aid).
